@@ -33,6 +33,7 @@ namespace DesktopAppVIS.DTOApp
         public bool Oznacen { get; set; }
         [System.ComponentModel.Browsable(false)]
         public char Aktivni { get; set; }
+        private string NormPrezdivka { get; set; }
 
         public static UzivatelApp GetAppFromDTO(DTO.Uzivatel p_Uzivatel)
         {
@@ -40,6 +41,7 @@ namespace DesktopAppVIS.DTOApp
             {
                 ID = p_Uzivatel.IDUzivatel,
                 Prezdivka = p_Uzivatel.Prezdivka,
+                NormPrezdivka = p_Uzivatel.NormPrezdivka,
                 Jmeno = p_Uzivatel.Jmeno,
                 Prijmeni = p_Uzivatel.Prijmeni,
                 Email = p_Uzivatel.Email,
@@ -54,6 +56,7 @@ namespace DesktopAppVIS.DTOApp
             {
                 IDUzivatel = p_UzivatelApp.ID,
                 Prezdivka = p_UzivatelApp.Prezdivka,
+                NormPrezdivka = p_UzivatelApp.NormPrezdivka,
                 Jmeno = p_UzivatelApp.Jmeno,
                 Prijmeni = p_UzivatelApp.Prijmeni,
                 Email = p_UzivatelApp.Email,

@@ -10,7 +10,7 @@ namespace DomainLogic
     public class BaseDL : IDisposable
     {
         protected OracleConnection connection;
-        private static string connetionString = "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=dbsys.cs.vsb.cz)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=oracle.dbsys.cs.vsb.cz)));User id=pus0065;Password=iQpR3iw8r9;";
+        private static string connetionString = "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=dbsys.cs.vsb.cz)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=oracle.dbsys.cs.vsb.cz)));User id=pus0065;Password=q3wxUTpCzj;";
 
         public BaseDL()
         {

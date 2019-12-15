@@ -19,9 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAO", "DAO\DAO.csproj", "{D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainLogic", "DomainLogic\DomainLogic.csproj", "{8211B476-6EE5-4EAB-8968-38A602333280}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceTest", "ServiceTest\ServiceTest.csproj", "{BCA64999-CB7D-45C5-A239-0489EC85776A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopAppVIS", "DesktopAppVIS\DesktopAppVIS.csproj", "{3841D0F5-483A-4302-A350-263C814BAD29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DesktopAppVIS", "DesktopAppVIS\DesktopAppVIS.csproj", "{3841D0F5-483A-4302-A350-263C814BAD29}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,10 +59,6 @@ Global
 		{8211B476-6EE5-4EAB-8968-38A602333280}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8211B476-6EE5-4EAB-8968-38A602333280}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8211B476-6EE5-4EAB-8968-38A602333280}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BCA64999-CB7D-45C5-A239-0489EC85776A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BCA64999-CB7D-45C5-A239-0489EC85776A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BCA64999-CB7D-45C5-A239-0489EC85776A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BCA64999-CB7D-45C5-A239-0489EC85776A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3841D0F5-483A-4302-A350-263C814BAD29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3841D0F5-483A-4302-A350-263C814BAD29}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3841D0F5-483A-4302-A350-263C814BAD29}.Release|Any CPU.ActiveCfg = Release|Any CPU

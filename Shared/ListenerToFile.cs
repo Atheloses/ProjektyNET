@@ -12,7 +12,7 @@ namespace Shared
         public override void Write(string message)
         {
             //this.IndentLevel
-            message = DateTime.Now.ToString("dd. MM. yyy HH:mm:ss.fff") + ": " + message;
+            message = DateTime.Now.ToString("dd/MM/yyy HH:mm:ss.fff") + ": " + message;
             File.AppendAllText(Path.GetFullPath("./DebugTraceOutput.txt"), message);
         }
 

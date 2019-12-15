@@ -129,6 +129,7 @@ namespace DesktopAppVIS.Zalozky
             NazevForm.Text = SelectedUzivatel.Prezdivka;
             Jmeno.Text = SelectedUzivatel.Jmeno;
             Prijmeni.Text = SelectedUzivatel.Prijmeni;
+            Email.Text = SelectedUzivatel.Email;
 
             List<DetailUkolApp> ukoly = new List<DetailUkolApp>();
             using var ukolDL = new UkolDL();
@@ -182,7 +183,8 @@ namespace DesktopAppVIS.Zalozky
             SelectedUzivatel.Prijmeni = Prijmeni.Text;
             SelectedUzivatel.Email = Email.Text;
 
-            await new UzivatelDL().UlozUzivatel(UzivatelApp.GetDTOFromApp(SelectedUzivatel));
+            var uziv = UzivatelApp.GetDTOFromApp(SelectedUzivatel);
+            await new UzivatelDL().UlozUzivatel(uziv);
         }
 
         private async void SplnitUkoly(object sender, EventArgs e)

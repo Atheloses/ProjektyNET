@@ -14,8 +14,8 @@ namespace DAO.Tables
 {
     public class UzivatelDA : CRUD<Uzivatel>
     {
-        private static string _SQL_UPDATE = "UPDATE Uzivatel SET Prezdivka=:Prezdivka,Jmeno=:Jmeno,Prijmeni=:Prijmeni," +
-            "Email=:Email,PocetPodukolu=:PocetPodukolu,Aktivni=:Aktivni,DatumRegistrace=:DatumRegistrace,HesloHash=:HesloHash,NormPrezdivka=:NormPrezdivka where ID=:ID";
+        private static string _SQL_UPDATE = "UPDATE Uzivatel SET Jmeno=:Jmeno,Prijmeni=:Prijmeni," +
+            "Email=:Email where ID=:ID";
         private static string _SQL_INSERT = "INSERT INTO Uzivatel (Prezdivka,Jmeno,Prijmeni,Email,PocetPodukolu,Aktivni,DatumRegistrace,HesloHash,NormPrezdivka) VALUES" +
             "(:Prezdivka,:Jmeno,:Prijmeni,:Email,:PocetPodukolu,:Aktivni,:DatumRegistrace,:HesloHash,:NormPrezdivka)";
         private string _SQL_SELECT = "SELECT " + _SQL_COLUMNS + " FROM Uzivatel uz WHERE uz.id=:ID";
@@ -93,15 +93,9 @@ namespace DAO.Tables
 
         protected override void AddParameters(OracleCommand p_Command, Uzivatel p_Uzivatel, bool p_UseID = true)
         {
-            p_Command.Parameters.Add(":Prezdivka", p_Uzivatel.Prezdivka);
             p_Command.Parameters.Add(":Jmeno", p_Uzivatel.Jmeno);
             p_Command.Parameters.Add(":Prijmeni", p_Uzivatel.Prijmeni);
             p_Command.Parameters.Add(":Email", p_Uzivatel.Email);
-            p_Command.Parameters.Add(":PocetPodukolu", p_Uzivatel.PocetPodukolu);
-            p_Command.Parameters.Add(":HesloHash", p_Uzivatel.HesloHash);
-            p_Command.Parameters.Add(":NormPrezdivka", p_Uzivatel.NormPrezdivka);
-            p_Command.Parameters.Add(":Aktivni", p_Uzivatel.Aktivni);
-            p_Command.Parameters.Add(":DatumRegistrace", p_Uzivatel.DatumRegistrace);
             if (p_UseID)
                 p_Command.Parameters.Add(":ID", p_Uzivatel.IDUzivatel);
         }

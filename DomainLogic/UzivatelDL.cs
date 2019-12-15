@@ -23,6 +23,8 @@ namespace DomainLogic
         /// <returns></returns>
         public async Task<bool> UlozUzivatel(Uzivatel p_Uzivatel)
         {
+            p_Uzivatel.DatumRegistrace = DateTime.Now;
+            p_Uzivatel.Aktivni = '1';
             return await new UzivatelDA(connection).Update(p_Uzivatel);
         }
 

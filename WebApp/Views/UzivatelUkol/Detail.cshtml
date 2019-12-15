@@ -1,0 +1,19 @@
+﻿@using WebApp.DTOApp
+@model SaveUzivatelUkolForm
+@{
+    UzivatelUkolApp podukol = ViewBag.Podukol;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(x => x.podukol.IDUzivatelUkol)
+    <strong>
+        Popis Podukolu:
+        @Html.TextBoxFor(x => x.podukol.Popis)
+        @Html.ValidationMessageFor(x => x.podukol)
+    </strong>
+    <button type="submit">uložit</button>
+}
+
+
+

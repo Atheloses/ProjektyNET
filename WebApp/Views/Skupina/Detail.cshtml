@@ -1,0 +1,40 @@
+﻿@using WebApp.DTOApp
+@model SkupinaForm
+
+@using (Html.BeginForm())
+{
+<script type="text/javascript">
+    $(function () {
+        $(".multiselect").multiselect();
+    });
+</script>
+@if( Model.skupinaApp.IDSkupina>0){
+<h1>Editace skupiny</h1>
+}else{
+<h1>Vytvořit novou skupinu</h1>
+}
+@Html.HiddenFor(x => x.skupinaApp.IDSkupina)
+<ul>
+    <li>
+        <label asp-for="skupinaApp.Nazev">Název: </label>
+        <input asp-for="skupinaApp.Nazev" class="form-control">
+        <span asp-validation-for="skupinaApp.Nazev" class="text-danger"></span>
+    </li>
+    <li>
+        <label asp-for="skupinaApp.Popis">Popis: </label>
+        <input asp-for="skupinaApp.Popis" class="form-control">
+        <span asp-validation-for="skupinaApp.Popis" class="text-danger"></span>
+    </li>
+    <li>
+        <label asp-for="uzivateleApp">Uživatelé: </label>
+        @Html.DropDownList("selectedUzivateleApp",
+                   new MultiSelectList(Model.uzivateleApp, "IDUzivatel", "Name", Model.selectedUzivatele), new { multiple = "multiple", @class="multiselect" })
+        <span asp-validation-for="uzivateleApp" class="text-danger"></span>
+    </li>
+
+
+</ul>
+<button type="submit">uložit</button>
+}
+
+

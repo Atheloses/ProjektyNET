@@ -1,0 +1,17 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using WebApp.DTOApp
+
+@inject SignInManager<UzivatelApp> SignInManager
+@inject UserManager<UzivatelApp> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <p>Přihlášen @UserManager.GetUserName(User), <a asp-area="" asp-controller="Account" asp-action="Logout">odhlásit</a></p>
+}
+else
+{
+    <ul class="nav navbar-nav navbar-right">
+        <li><a asp-area="" asp-controller="Account" asp-action="Register">Registrace</a></li>
+        <li><a asp-area="" asp-controller="Account" asp-action="Login">Přihlášení</a></li>
+    </ul>
+}

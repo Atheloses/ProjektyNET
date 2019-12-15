@@ -1,0 +1,27 @@
+﻿@using WebApp.DTOApp
+@model SaveUzivatelUkolForm
+@{
+    UzivatelUkolApp podukol = ViewBag.Podukol;
+}
+
+@using (Html.BeginForm())
+{
+    <h1>Vytvořit nový podúkol</h1>
+    @Html.HiddenFor(x => x.podukol.IDUzivatelUkol)
+    <ul>
+        <li>
+            Popis:
+            @Html.TextBoxFor(x => x.podukol.Popis)
+            @Html.ValidationMessageFor(x => x.podukol)
+        </li>
+        <li>
+            <label asp-for="podukol.Termin">Termín: </label>
+            <input asp-for="podukol.Termin" class="form-control" placeholder="Date for the meeting" id="datepicker">
+            <span asp-validation-for="podukol.Termin" class="text-danger"></span>
+        </li>
+    </ul>
+    <button type="submit">uložit</button>
+}
+
+
+

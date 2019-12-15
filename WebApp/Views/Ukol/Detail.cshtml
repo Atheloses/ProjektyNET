@@ -1,0 +1,56 @@
+﻿@using WebApp.DTOApp
+@model SaveUkolForm
+
+@using (Html.BeginForm())
+{
+<script type="text/javascript">
+    $(function () {
+        $(".multiselect").multiselect();
+    });
+</script>
+@if( Model.ukolApp.IDUkol>0){
+<h1>Editace úkolu</h1>
+}else{
+<h1>Vytvořit nový úkol</h1>
+}
+@Html.HiddenFor(x => x.ukolApp.IDUkol)
+<ul>
+    <li>
+        <label asp-for="ukolApp.Nazev">Název: </label>
+        <input asp-for="ukolApp.Nazev" class="form-control">
+        <span asp-validation-for="ukolApp.Nazev" class="text-danger"></span>
+    </li>
+    <li>
+        <label asp-for="ukolApp.Popis">Popis: </label>
+        <input asp-for="ukolApp.Popis" class="form-control">
+        <span asp-validation-for="ukolApp.Popis" class="text-danger"></span>
+    </li>
+    <li>
+        <label asp-for="ukolApp.Mandays">Mandays: </label>
+        <input asp-for="ukolApp.Mandays" class="form-control">
+        <span asp-validation-for="ukolApp.Termin" class="text-danger"></span>
+    </li>
+    <li>
+        <label asp-for="ukolApp.Termin">Termín: </label>
+        <input asp-for="ukolApp.Termin" class="form-control" id="datepicker">
+        <span asp-validation-for="ukolApp.Termin" class="text-danger"></span>
+    </li>
+    <li>
+        <label asp-for="prioritaApp">Priorita: </label>
+        @Html.DropDownList("selectedPrioritaApp",
+                   new SelectList(Model.prioritaApp, "IDPriorita", "Nazev", Model.ukolApp.IDPriorita))
+        <span asp-validation-for="prioritaApp" class="text-danger"></span>
+    </li>
+    <li>
+        <label asp-for="uzivateleApp">Uživatelé: </label>
+        @Html.DropDownList("selectedUzivateleApp",
+                   new MultiSelectList(Model.uzivateleApp, "IDUzivatel", "Name", Model.selectedUzivatele), new { multiple = "multiple", @class="multiselect" })
+        <span asp-validation-for="uzivateleApp" class="text-danger"></span>
+    </li>
+
+
+</ul>
+<button type="submit">uložit</button>
+}
+
+

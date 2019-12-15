@@ -1,0 +1,43 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using WebApp.DTOApp
+@inject SignInManager<UzivatelApp> SignInManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <h1>Seznam mých podúkolů</h1>
+    <table>
+        <tr>
+            <th>Popis podúkolu</th>
+            <th>Termín splnění podúkolu</th>
+            <th>Splněno</th>
+            <th>Akce</th>
+        </tr>
+        @foreach (UzivatelUkolApp uzivatelUkolApp in ViewBag.UzivatelUkolItems)
+        {
+            <tr>
+                <td>@uzivatelUkolApp.Popis</td>
+                <td>@uzivatelUkolApp.Termin</td>
+                @if (uzivatelUkolApp.Splnen)
+                {
+                    <td>Splněno - @uzivatelUkolApp.CasSplneni</td>
+                }
+                else
+                {
+                    <td><a href="@Url.Action("Splnit","UzivatelUkol", new {p_Id=uzivatelUkolApp.IDUzivatelUkol})">@uzivatelUkolApp.Termin</a></td>
+                }
+                <td>
+                    <a href="@Url.Action("Detail","UzivatelUkol", new {p_Id=uzivatelUkolApp.IDUzivatelUkol})">detail podúkolu</a>
+                    <a href="@Url.Action("Detail","Ukol", new {p_Id=uzivatelUkolApp.IDUkol})">přejít na úkol</a>
+                </td>
+            </tr>
+        }
+        @*<tr><th colspan="5"><a href="@Url.Action("Novy","UzivatelUkol")">přidat</a></th></tr>*@
+    </table>
+}
+else
+{
+    <h1>Úkolníček</h1>
+    <p>Martin Pustka 2019</p>
+}
+
+

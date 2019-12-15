@@ -1,0 +1,20 @@
+﻿<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"]Ukolnicek</title>
+</head>
+<body>
+    <ul>
+        @*<li><a href="@Url.Action("GetXml","Content")">XML</a></li>*@
+        <li><a href="@Url.Action("Index","UzivatelUkol")">Podukoly</a></li>
+        <li><a href="@Url.Action("Index","Ukol")">Ukoly</a></li>
+        <li><a href="@Url.Action("Index","Skupina")">Skupiny</a></li>
+        @await Html.PartialAsync("_LoginPartial")
+    </ul>
+
+    <div class="container">
+        @RenderBody()
+    </div>
+</body>
+</html>

@@ -1,0 +1,21 @@
+﻿
+@using WebApp.DTOApp
+<h1>Seznam skupin</h1>
+<table>
+    <tr>
+        <th>Název skupiny</th>
+        <th>Popis skupiny</th>
+        <th>Datum vytvoření</th>
+        <th>Akce</th>
+    </tr>
+    @foreach (SkupinaApp row in ViewBag.IndexItems)
+    {
+<tr>
+    <td><a href="@Url.Action("Detail", "Skupina", new { p_Id = row.IDSkupina })">@row.Nazev</a></td>
+    <td>@row.Popis</td>
+    <td>@row.DatumVytvoreni</td>
+    <td><a href="@Url.Action("Smazat", "Skupina", new { p_Id = row.IDSkupina })">Smazat skupinu</a></td>
+</tr>
+    }
+    <tr><th colspan="5"><a href="@Url.Action("Detail","Skupina")">Nová skupina</a></th></tr>
+</table>

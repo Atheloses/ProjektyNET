@@ -1,0 +1,43 @@
+﻿
+@using WebApp.DTOApp
+<h1>Seznam mých úkolů</h1>
+<table>
+    <tr>
+        <th>Název úkolu</th>
+        <th>Popis úkolu</th>
+        <th>Termín splnění úkolu</th>
+        <th>Popis podúkolu</th>
+        <th>Termín splnění podúkolu</th>
+        <th>Akce</th>
+    </tr>
+    @foreach (KeyValuePair<UkolApp, IEnumerable<UzivatelUkolApp>> dictRow in ViewBag.IndexItems)
+    {
+        var ukolApp = dictRow.Key;
+        foreach(UzivatelUkolApp uzivatelUkolApp in dictRow.Value)
+        {
+            <tr>
+                <td><a href="@Url.Action("Detail","Ukol", new {p_Id=ukolApp.IDUkol})">@ukolApp.Nazev</a></td>
+                <td>@ukolApp.Popis</td>
+                @if (ukolApp.Splnen)
+                {
+                    <td>Splněno - @ukolApp.CasSplneni</td>
+                }
+                else
+                {
+                    <td><a href="@Url.Action("Splnit","Ukol", new {p_Id=ukolApp.IDUkol})">@ukolApp.Termin</a></td>
+                }
+                <td>@uzivatelUkolApp.Popis</td>
+                @if (uzivatelUkolApp.Splnen)
+                {
+                    <td>Splněno - @uzivatelUkolApp.CasSplneni</td>
+                }
+                else
+                {
+                    <td><a href="@Url.Action("Splnit","UzivatelUkol", new {p_Id=uzivatelUkolApp.IDUzivatelUkol})">@uzivatelUkolApp.Termin</a></td>
+                }
+                <td><a href="@Url.Action("Detail","UzivatelUkol", new {p_Id=uzivatelUkolApp.IDUzivatelUkol})">detail podúkolu</a></td>
+            </tr>
+        }
+    }
+    <tr><th colspan="5"><a href="@Url.Action("Detail","Ukol")">Nový úkol</a></th></tr>
+</table>

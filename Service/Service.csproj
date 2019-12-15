@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <UserSecretsId>dotnet-Service-F21FEE82-991A-4C7F-87A3-508C2095B91C</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="2.4.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="3.0.0" />
+    <PackageReference Include="MimeKit" Version="2.4.1" />
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+  </ItemGroup>
+</Project>

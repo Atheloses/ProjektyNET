@@ -86,7 +86,8 @@ namespace WebApp.Controllers
         {
             var skupinaApp = p_Form.skupinaApp;
             var idUziv = new List<int>();
-            p_Form.selectedUzivateleApp.ForEach(x => idUziv.Add(int.Parse(x)));
+            if(p_Form.selectedUzivateleApp!=null && p_Form.selectedUzivateleApp.Count>0)
+                p_Form.selectedUzivateleApp.ForEach(x => idUziv.Add(int.Parse(x)));
             idUziv.Add(int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value));
             if (ModelState.IsValid)
             {

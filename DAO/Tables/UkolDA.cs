@@ -20,7 +20,11 @@ namespace DAO.Tables
         private static string _SQL_COLUMNS = "uk.id uk_id,uk.casvytvoreni uk_casvytvoreni,uk.nazev uk_nazev,uk.popis uk_popis," +
             "uk.cassplneni uk_cassplneni,uk.termin uk_termin,uk.priorita_id uk_priorita_id,uk.mandays uk_mandays";
         private static string _SQL_DROP = "DELETE FROM Ukol WHERE id=:ID";
+        private string _SQL_SELECT_ALL = "SELECT " + _SQL_COLUMNS + " FROM Ukol uk";
+        private string _SQL_SEQ_VALUE = "select ukol_seq.CURRVAL as value from dual";
 
+        public override string SQL_SEQ_VALUE => _SQL_SEQ_VALUE;
+        public override string SQL_SELECT_ALL => _SQL_SELECT_ALL;
         public override string SQL_UPDATE => _SQL_UPDATE;
         public override string SQL_INSERT => _SQL_INSERT;
         public override string SQL_SELECT => _SQL_SELECT;
@@ -54,48 +58,61 @@ namespace DAO.Tables
                     command.CommandText = command.CommandText.Remove(command.CommandText.IndexOf("WHERE"));
                 command.CommandText += "where uk.id in (" + string.Join(',', p_IDs) + ")";
 
-                using (var reader = await command.ExecuteReaderAsync())
-                    output = GetDTOList(reader);
+                using var reader = await command.ExecuteReaderAsync();
+
+                var dataTable = new DataTable();
+                dataTable.Load(reader);
+
+                output = GetDTOList(dataTable);
             }
 
             return output;
         }
 
-        public override List<Ukol> GetDTOList(DbDataReader p_Reader)
+        public override List<Ukol> GetDTOList(DataTable p_DataTable)
         {
             var output = new List<Ukol>();
-            while (p_Reader.Read())
-            {
-                output.Add(GetDTO(p_Reader));
-            }
+            foreach (DataRow row in p_DataTable.Rows)
+                output.Add(GetDTO(row));
+
             return output;
         }
 
-        protected override void AddParameters(OracleCommand p_Command, Ukol p_Ukol, bool p_UseID = true)
+        public override void AddParameters(Dictionary<string, object> p_Parameters, Ukol p_Ukol, bool p_UseID = true)
         {
-            p_Command.Parameters.Add(":CasVytvoreni", p_Ukol.CasVytvoreni);
-            p_Command.Parameters.Add(":Nazev", p_Ukol.Nazev);
-            p_Command.Parameters.Add(":Popis", p_Ukol.Popis);
-            p_Command.Parameters.Add(":CasSplneni", p_Ukol.CasSplneni);
-            p_Command.Parameters.Add(":Termin", p_Ukol.Termin);
-            p_Command.Parameters.Add(":Priorita_ID", p_Ukol.IDPriorita);
-            p_Command.Parameters.Add(":Mandays", p_Ukol.Mandays);
+            p_Parameters.Add(":CasVytvoreni", p_Ukol.CasVytvoreni);
+            p_Parameters.Add(":Nazev", p_Ukol.Nazev);
+            p_Parameters.Add(":Popis", p_Ukol.Popis);
+            p_Parameters.Add(":CasSplneni", p_Ukol.CasSplneni);
+            p_Parameters.Add(":Termin", p_Ukol.Termin);
+            p_Parameters.Add(":Priorita_ID", p_Ukol.IDPriorita);
+            p_Parameters.Add(":Mandays", p_Ukol.Mandays);
             if (p_UseID)
-                p_Command.Parameters.Add(":ID", p_Ukol.IDUkol);
+                p_Parameters.Add(":ID", p_Ukol.IDUkol);
         }
 
-        public override Ukol GetDTO(DbDataReader p_Reader)
+        public override void AddParametersID(Dictionary<string, object> p_Parameters, int p_ID)
+        {
+            p_Parameters.Add(":ID", p_ID);
+        }
+
+        public override int GetSeqValue(DataTable p_DataTable)
+        {
+            return Convert.ToInt32(((DataRow)p_DataTable.Rows[0])["value"]);
+        }
+
+        public override Ukol GetDTO(DataRow p_DataRow)
         {
             return new Ukol
             {
-                IDUkol = Convert.ToInt32(p_Reader["uk_id"]),
-                CasVytvoreni = Convert.ToDateTime(p_Reader["uk_casvytvoreni"]),
-                Nazev = Convert.ToString(p_Reader["uk_nazev"]),
-                Popis = Convert.ToString(p_Reader["uk_popis"]),
-                CasSplneni = p_Reader["uk_cassplneni"].GetValue<DateTime?>(),
-                Termin = Convert.ToDateTime(p_Reader["uk_termin"]),
-                IDPriorita = Convert.ToInt32(p_Reader["uk_priorita_id"]),
-                Mandays = Convert.ToInt32(p_Reader["uk_mandays"])
+                IDUkol = Convert.ToInt32(p_DataRow["uk_id"]),
+                CasVytvoreni = Convert.ToDateTime(p_DataRow["uk_casvytvoreni"]),
+                Nazev = Convert.ToString(p_DataRow["uk_nazev"]),
+                Popis = Convert.ToString(p_DataRow["uk_popis"]),
+                CasSplneni = p_DataRow["uk_cassplneni"].GetValue<DateTime?>(),
+                Termin = Convert.ToDateTime(p_DataRow["uk_termin"]),
+                IDPriorita = Convert.ToInt32(p_DataRow["uk_priorita_id"]),
+                Mandays = Convert.ToInt32(p_DataRow["uk_mandays"])
             };
         }
     }

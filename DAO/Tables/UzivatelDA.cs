@@ -24,7 +24,11 @@ namespace DAO.Tables
             " uz.email uz_email, uz.datumregistrace uz_datumregistrace, uz.pocetpodukolu uz_pocetpodukolu, uz.aktivni uz_aktivni," +
             " uz.heslohash uz_heslohash,uz.normprezdivka uz_normprezdivka";
         private static string _SQL_DROP = "DELETE FROM Uzivatel WHERE id=:ID";
+        private string _SQL_SELECT_ALL = "SELECT " + _SQL_COLUMNS + " FROM Uzivatel uz";
+        private string _SQL_SEQ_VALUE = "select uzivatel_seq.CURRVAL as value from dual";
 
+        public override string SQL_SEQ_VALUE => _SQL_SEQ_VALUE;
+        public override string SQL_SELECT_ALL => _SQL_SELECT_ALL;
         public override string SQL_UPDATE => _SQL_UPDATE;
         public override string SQL_INSERT => _SQL_INSERT;
         public override string SQL_SELECT => _SQL_SELECT;
@@ -49,13 +53,12 @@ namespace DAO.Tables
             return true;
         }
 
-        public override List<Uzivatel> GetDTOList(DbDataReader p_Reader)
+        public override List<Uzivatel> GetDTOList(DataTable p_DataTable)
         {
             var output = new List<Uzivatel>();
-            while (p_Reader.Read())
-            {
-                output.Add(GetDTO(p_Reader));
-            }
+            foreach (DataRow row in p_DataTable.Rows)
+                output.Add(GetDTO(row));
+
             return output;
         }
 
@@ -72,7 +75,11 @@ namespace DAO.Tables
                 if (!reader.HasRows)
                     output = null;
                 else
-                    output = GetDTOList(reader)[0];
+                {
+                    var dataTable = new DataTable();
+                    dataTable.Load(reader);
+                    output = GetDTOList(dataTable)[0];
+                }
             }
             return output;
         }
@@ -91,29 +98,39 @@ namespace DAO.Tables
             return true;
         }
 
-        protected override void AddParameters(OracleCommand p_Command, Uzivatel p_Uzivatel, bool p_UseID = true)
+        public override void AddParameters(Dictionary<string, object> p_Parameters, Uzivatel p_Uzivatel, bool p_UseID = true)
         {
-            p_Command.Parameters.Add(":Jmeno", p_Uzivatel.Jmeno);
-            p_Command.Parameters.Add(":Prijmeni", p_Uzivatel.Prijmeni);
-            p_Command.Parameters.Add(":Email", p_Uzivatel.Email);
+            p_Parameters.Add(":Jmeno", p_Uzivatel.Jmeno);
+            p_Parameters.Add(":Prijmeni", p_Uzivatel.Prijmeni);
+            p_Parameters.Add(":Email", p_Uzivatel.Email);
             if (p_UseID)
-                p_Command.Parameters.Add(":ID", p_Uzivatel.IDUzivatel);
+                p_Parameters.Add(":ID", p_Uzivatel.IDUzivatel);
         }
 
-        public override Uzivatel GetDTO(DbDataReader p_Reader)
+        public override void AddParametersID(Dictionary<string, object> p_Parameters, int p_ID)
+        {
+            p_Parameters.Add(":ID", p_ID);
+        }
+
+        public override int GetSeqValue(DataTable p_DataTable)
+        {
+            return Convert.ToInt32(((DataRow)p_DataTable.Rows[0])["value"]);
+        }
+
+        public override Uzivatel GetDTO(DataRow p_DataRow)
         {
             return new Uzivatel
             {
-                IDUzivatel = Convert.ToInt32(p_Reader["uz_id"]),
-                Prezdivka = Convert.ToString(p_Reader["uz_prezdivka"]),
-                Jmeno = Convert.ToString(p_Reader["uz_jmeno"]),
-                Prijmeni = Convert.ToString(p_Reader["uz_prijmeni"]),
-                Email = Convert.ToString(p_Reader["uz_email"]),
-                DatumRegistrace = Convert.ToDateTime(p_Reader["uz_datumregistrace"]),
-                PocetPodukolu = Convert.ToInt32(p_Reader["uz_pocetpodukolu"]),
-                Aktivni = Convert.ToChar(p_Reader["uz_aktivni"]),
-                NormPrezdivka = Convert.ToString(p_Reader["uz_normprezdivka"]),
-                HesloHash = Convert.ToString(p_Reader["uz_heslohash"])
+                IDUzivatel = Convert.ToInt32(p_DataRow["uz_id"]),
+                Prezdivka = Convert.ToString(p_DataRow["uz_prezdivka"]),
+                Jmeno = Convert.ToString(p_DataRow["uz_jmeno"]),
+                Prijmeni = Convert.ToString(p_DataRow["uz_prijmeni"]),
+                Email = Convert.ToString(p_DataRow["uz_email"]),
+                DatumRegistrace = Convert.ToDateTime(p_DataRow["uz_datumregistrace"]),
+                PocetPodukolu = Convert.ToInt32(p_DataRow["uz_pocetpodukolu"]),
+                Aktivni = Convert.ToChar(p_DataRow["uz_aktivni"]),
+                NormPrezdivka = Convert.ToString(p_DataRow["uz_normprezdivka"]),
+                HesloHash = Convert.ToString(p_DataRow["uz_heslohash"])
             };
         }
     }

@@ -123,7 +123,9 @@ namespace DAO
                         command.Parameters.Add(":skupina_id", skupina.IDSkupina);
                         using (var reader = command.ExecuteReader())
                         {
-                            foreach (var uzsk in uzivatelSkupinaDA.GetDTOList(reader))
+                            var dataTable = new DataTable();
+                            dataTable.Load(reader);
+                            foreach (var uzsk in uzivatelSkupinaDA.GetDTOList(dataTable))
                             {
                                 if (uzsk.CasOdpojeni is null && uzsk.CasPripojeni >= monthAgo)
                                     MandaysLocal = (DateTime.Now - uzsk.CasPripojeni).Days;

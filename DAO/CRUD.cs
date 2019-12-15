@@ -15,8 +15,10 @@ namespace DAO
         public abstract string SQL_UPDATE { get; }
         public abstract string SQL_INSERT { get; }
         public abstract string SQL_SELECT { get; }
+        public abstract string SQL_SELECT_ALL { get; }
         public abstract string SQL_DROP { get; }
         public abstract string SQL_COLUMNS { get; }
+        public abstract string SQL_SEQ_VALUE { get; }
 
         private OracleConnection _Connection;
         public OracleConnection Connection { get => _Connection; set => _Connection = value; }
@@ -26,73 +28,84 @@ namespace DAO
         {
             T output = default(T);
             using var command = new OracleCommand(SQL_SELECT, Connection);
-            command.Parameters.Add(":ID", p_ID);
+            var prms = new Dictionary<string, object>();
+            AddParametersID(prms, p_ID);
+            foreach (var prm in prms)
+                command.Parameters.Add(prm.Key, prm.Value);
 
             SaveCommand(command);
             using (var reader = await command.ExecuteReaderAsync())
             {
                 if (!reader.HasRows)
                     throw new Exception(DateTime.Now + ": Neexistuje zaznam s id '" + p_ID + "'");
-                output = GetDTOList(reader)[0];
+
+                var dataTable = new DataTable();
+                dataTable.Load(reader);
+
+                output = GetDTOList(dataTable)[0];
             }
-            await new OracleCommand("commit", Connection).ExecuteNonQueryAsync();
             return output;
         }
 
         public async Task<bool> Update(T p_Object)
         {
             using var command = new OracleCommand(SQL_UPDATE, Connection);
-            AddParameters(command, p_Object);
+            var prms = new Dictionary<string, object>();
+            AddParameters(prms, p_Object, false);
+            foreach (var prm in prms)
+                command.Parameters.Add(prm.Key, prm.Value);
 
             SaveCommand(command);
             await command.ExecuteNonQueryAsync();
-            await new OracleCommand("commit", Connection).ExecuteNonQueryAsync();
             return true;
         }
 
         public async Task<int> Insert(T p_Object)
         {
-            int output=-1;
             using var command = new OracleCommand(SQL_INSERT, Connection);
-            AddParameters(command, p_Object, false);
+            var prms = new Dictionary<string, object>();
+            AddParameters(prms, p_Object, false);
+            foreach (var prm in prms)
+                command.Parameters.Add(prm.Key, prm.Value);
 
             SaveCommand(command);
             await command.ExecuteNonQueryAsync();
-            await new OracleCommand("commit", Connection).ExecuteNonQueryAsync();
 
-            using var command2 = new OracleCommand("select skupina_seq.CURRVAL as value from dual", Connection);
+            using var command2 = new OracleCommand(SQL_SEQ_VALUE, Connection);
             SaveCommand(command2);
             using (var reader = await command2.ExecuteReaderAsync())
             {
-                if (reader.Read())
-                    output = Convert.ToInt32(reader["value"]);
-            }
-            await new OracleCommand("commit", Connection).ExecuteNonQueryAsync();
+                var dataTable = new DataTable();
+                dataTable.Load(reader);
 
-            return output;
+                return GetSeqValue(dataTable);
+            }
         }
 
         public virtual async Task<bool> DropId(int p_ID)
         {
             using var command = new OracleCommand(SQL_DROP, Connection);
-            command.Parameters.Add(":ID", p_ID);
+            var prms = new Dictionary<string, object>();
+            AddParametersID(prms, p_ID);
+            foreach (var prm in prms)
+                command.Parameters.Add(prm.Key, prm.Value);
 
             SaveCommand(command);
             await command.ExecuteNonQueryAsync();
-            await new OracleCommand("commit", Connection).ExecuteNonQueryAsync();
             return true;
         }
 
         public virtual async Task<List<T>> SelectAll()
         {
-            using var command = new OracleCommand(SQL_SELECT, Connection);
-            if (command.CommandText.Contains("WHERE"))
-                command.CommandText = command.CommandText.Remove(command.CommandText.IndexOf("WHERE"));
+            using var command = new OracleCommand(SQL_SELECT_ALL, Connection);
 
             SaveCommand(command);
             using var reader = await command.ExecuteReaderAsync();
-            await new OracleCommand("commit", Connection).ExecuteNonQueryAsync();
-            return GetDTOList(reader);
+
+            var dataTable = new DataTable();
+            dataTable.Load(reader);
+
+            return GetDTOList(dataTable);
         }
 
         private void SaveCommand(OracleCommand p_Command)
@@ -111,8 +124,10 @@ namespace DAO
             Trace.WriteLine(output);
         }
 
-        public abstract List<T> GetDTOList(DbDataReader p_Reader);
-        public abstract T GetDTO(DbDataReader p_Reader);
-        protected abstract void AddParameters(OracleCommand p_Command, T p_Object, bool p_UseID = true);
+        public abstract List<T> GetDTOList(DataTable p_DataTable);
+        public abstract int GetSeqValue(DataTable p_DataTable);
+        public abstract T GetDTO(DataRow p_DataRow);
+        public abstract void AddParameters(Dictionary<string, object> p_Command, T p_Object, bool p_UseID = true);
+        public abstract void AddParametersID(Dictionary<string, object> p_Command, int p_ID);
     }
 }

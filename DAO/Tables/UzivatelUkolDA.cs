@@ -57,11 +57,6 @@ namespace DAO.Tables
             return output;
         }
 
-        public async Task<bool> ZiskejMeUzivatelUkolProUkol(int p_IDUkol)
-        {
-            return await SpecialOperations.SplneniUkolu(p_IDUkol, Connection, new AllDA(Connection));
-        }
-
         protected override void AddParameters(OracleCommand p_Command, UzivatelUkol p_UzivatelUkol, bool p_UseID = true)
         {
             p_Command.Parameters.Add(":Spravce", p_UzivatelUkol.Spravce);

@@ -57,7 +57,7 @@ namespace DAO
         /// <summary>
         /// 5.2.2 Splnění úkolu a jeho podúkolů
         /// </summary>
-        public static async Task<bool> SplneniUkolu(int p_Ukol_ID, OracleConnection p_Connection, AllDA Tables)
+        public static async Task<bool> SplneniUkolu(int p_Ukol_ID, OracleConnection p_Connection)
         {
             try
             {
@@ -101,7 +101,7 @@ namespace DAO
         /// <summary>
         /// 5.2.4 Výpočet efektivity skupiny
         /// </summary>
-        public static async Task<bool> EfektivitaSkupin(OracleConnection p_Connection, AllDA Tables)
+        public static async Task<bool> EfektivitaSkupin(OracleConnection p_Connection)
         {
             using (OracleCommand command = new OracleCommand("", p_Connection)) //call EfektivitaSkupin()
             {
@@ -111,17 +111,19 @@ namespace DAO
                 DateTime monthAgo = DateTime.Now.AddDays(-30);
                 try
                 {
-                    List<Skupina> skupiny = await Tables.SkupinaDA.SelectAll();
+                    var skupinaDA = new SkupinaDA(p_Connection);
+                    var uzivatelSkupinaDA = new UzivatelSkupinaDA(p_Connection);
+                    List<Skupina> skupiny = await skupinaDA.SelectAll();
                     foreach (var skupina in skupiny)
                     {
                         Mandays = 0;
-                        command.CommandText = "select " + Tables.UzivatelSkupinaDA.SQL_COLUMNS + " from uzivatelskupina uzsk where uzsk.casodpojeni is null or uzsk.casodpojeni>:month_ago and uzsk.skupina_id=:skupina_id";
+                        command.CommandText = "select " + uzivatelSkupinaDA.SQL_COLUMNS + " from uzivatelskupina uzsk where uzsk.casodpojeni is null or uzsk.casodpojeni>:month_ago and uzsk.skupina_id=:skupina_id";
                         command.Parameters.Clear();
                         command.Parameters.Add(":month_ago", monthAgo);
                         command.Parameters.Add(":skupina_id", skupina.IDSkupina);
                         using (var reader = command.ExecuteReader())
                         {
-                            foreach (var uzsk in Tables.UzivatelSkupinaDA.GetDTOList(reader))
+                            foreach (var uzsk in uzivatelSkupinaDA.GetDTOList(reader))
                             {
                                 if (uzsk.CasOdpojeni is null && uzsk.CasPripojeni >= monthAgo)
                                     MandaysLocal = (DateTime.Now - uzsk.CasPripojeni).Days;
@@ -153,7 +155,7 @@ namespace DAO
                             else
                                 skupina.Efektivita = (hotoveMandays * 100 / Mandays).ToString();
                             Console.WriteLine("Efektivita skupiny '" + skupina.Nazev + "': " + skupina.Efektivita);
-                            await Tables.SkupinaDA.Update(skupina);
+                            await skupinaDA.Update(skupina);
                         }
                     }
                     transaction.Commit();
@@ -171,11 +173,11 @@ namespace DAO
         /// <summary>
         /// 5.2.5 Zobrazit nesplněné úkoly
         /// </summary>
-        public static async Task<bool> ZobrazitNesplneneUkoly(OracleConnection p_Connection, int p_Uzivatel_ID, AllDA Tables)
+        public static async Task<bool> ZobrazitNesplneneUkoly(OracleConnection p_Connection, int p_Uzivatel_ID)
         {
             try
             {
-                Uzivatel u1 = await Tables.UzivatelDA.SelectId(2);
+                Uzivatel u1 = await new UzivatelDA(p_Connection).SelectId(2);
                 using (OracleCommand command = new OracleCommand("", p_Connection)
                 {
                     CommandText = "select uk.nazev nazev_ukolu,uk.popis popis_ukolu,uzuk.popis popis_podukolu,uzuk.termin termin_podukolu,pr.nazev nazev_priority " +
@@ -233,7 +235,7 @@ namespace DAO
         /// <summary>
         /// 5.2.6 Zobrazit statistiky skupin a úkolů
         /// </summary>
-        public static async Task<bool> StatistikySkupinUkolu(OracleConnection p_Connection, AllDA Tables)
+        public static async Task<bool> StatistikySkupinUkolu(OracleConnection p_Connection)
         {
             try
             {
@@ -283,7 +285,7 @@ namespace DAO
                     }
                 }
 
-                List<StatistikyUkoluGlobal> statistiky = await Tables.StatistikyUkoluGlobalDA.SelectAll();
+                List<StatistikyUkoluGlobal> statistiky = await new StatistikyUkoluGlobalDA(p_Connection).SelectAll();
                 foreach (var stat in statistiky)
                     Console.WriteLine("Nazev statistiky: '" + stat.Kod + " - " + stat.Popis + "', Hodnota: '" + stat.Hodnota + "'");
                 return true;

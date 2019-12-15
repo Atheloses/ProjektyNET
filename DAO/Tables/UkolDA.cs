@@ -40,7 +40,7 @@ namespace DAO.Tables
 
         public async Task<bool> SplneniUkolu(int p_IDUkol)
         {
-            return await SpecialOperations.SplneniUkolu(p_IDUkol, Connection, new AllDA(Connection));
+            return await SpecialOperations.SplneniUkolu(p_IDUkol, Connection);
         }
 
         public virtual async Task<IEnumerable<Ukol>> SelectId(IEnumerable<int> p_IDs)

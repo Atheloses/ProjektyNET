@@ -37,6 +37,7 @@ namespace WebApp.Models
         public async Task<bool> UlozSkupinu(SkupinaApp p_SkupinaApp)
         {
             using var skupinaDL = new SkupinaDL();
+            p_SkupinaApp.Efektivita = "0";
             await skupinaDL.UlozSkupinu(SkupinaApp.GetDTOFromApp(p_SkupinaApp));
 
             return true;

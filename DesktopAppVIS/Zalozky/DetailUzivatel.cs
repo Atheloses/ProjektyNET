@@ -84,7 +84,6 @@ namespace DesktopAppVIS.Zalozky
 
             EmailLabel = new Label() { Text = "Email:", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill };
             Email = new TextBox();
-            Email.Validating += new CancelEventHandler(IsValidEmail);
 
             UkolyLabel = new Label() { Text = "Mé úkoly", TextAlign = ContentAlignment.MiddleCenter, Dock = DockStyle.Bottom };
             Ukoly = new DataGridView() { Dock = DockStyle.Fill };
@@ -126,6 +125,7 @@ namespace DesktopAppVIS.Zalozky
 
         private async void FillData()
         {
+            Email.BackColor = Color.White;
             NazevForm.Text = SelectedUzivatel.Prezdivka;
             Jmeno.Text = SelectedUzivatel.Jmeno;
             Prijmeni.Text = SelectedUzivatel.Prijmeni;
@@ -175,7 +175,6 @@ namespace DesktopAppVIS.Zalozky
         {
             if (!IsValidEmail(Email.Text))
             {
-                Email.BackColor = Color.IndianRed;
                 return;
             }
 
@@ -223,20 +222,6 @@ namespace DesktopAppVIS.Zalozky
             FillData();
         }
 
-        private void IsValidEmail(object sender, EventArgs e)
-        {
-            if (!IsValidEmail(Email.Text))
-            {
-                Email.BackColor = Color.IndianRed;
-                return;
-            }
-            else
-            {
-                Email.BackColor = Color.White;
-                return;
-            }
-        }
-
         private bool IsValidEmail(string email)
         {
             try
@@ -244,11 +229,12 @@ namespace DesktopAppVIS.Zalozky
                 if (string.IsNullOrEmpty(email))
                     return true;
                 var addr = new System.Net.Mail.MailAddress(email);
-                Email.BackColor = Color.IndianRed;
+                Email.BackColor = Color.White;
                 return addr.Address == email;
             }
             catch
             {
+                Email.BackColor = Color.IndianRed;
                 return false;
             }
         }

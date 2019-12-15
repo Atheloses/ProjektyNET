@@ -45,7 +45,9 @@ namespace DAO
             AddParameters(command, p_Object);
 
             SaveCommand(command);
-            command.ExecuteNonQuery();
+            //nefunguje update nad uzivatel?!!!!! -3h wasted and nothing
+            //await new OracleCommand("UPDATE Uzivatel SET Jmeno='asd',Prijmeni='',Email='djshark958@gmail.com' where ID='4'", Connection).ExecuteNonQueryAsync();
+            await command.ExecuteNonQueryAsync();
             await new OracleCommand("commit", Connection).ExecuteNonQueryAsync();
             return true;
         }

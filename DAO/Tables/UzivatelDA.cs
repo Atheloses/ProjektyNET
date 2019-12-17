@@ -62,6 +62,8 @@ namespace DAO.Tables
             return output;
         }
 
+        #region AT.NET Project
+
         public async Task<Uzivatel> SelectNormPrezdivka(string p_NormPrezdivka)
         {
             var start = DateTime.Now;
@@ -97,6 +99,8 @@ namespace DAO.Tables
             await command.ExecuteNonQueryAsync();
             return true;
         }
+
+        #endregion AT.NET Project
 
         public override void AddParameters(Dictionary<string, object> p_Parameters, Uzivatel p_Uzivatel, bool p_UseID = true)
         {

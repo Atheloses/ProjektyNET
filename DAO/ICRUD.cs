@@ -20,7 +20,7 @@ namespace DAO
 
         OracleConnection Connection { get; set; }
         Task<int> Insert(T p_Uzivatel);
-        Task<List<T>> SelectAll();
+        Task<List<T>> SelectAll(bool p_UseXML = false);
         Task<T> SelectId(int p_ID);
         Task<bool> Update(T p_Uzivatel);
         Task<bool> DropId(int p_ID);

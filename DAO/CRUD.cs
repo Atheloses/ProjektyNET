@@ -1,12 +1,16 @@
 ﻿using Oracle.ManagedDataAccess.Client;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace DAO
 {
@@ -95,7 +99,7 @@ namespace DAO
             return true;
         }
 
-        public virtual async Task<List<T>> SelectAll()
+        public virtual async Task<List<T>> SelectAll(bool p_UseXML = false)
         {
             using var command = new OracleCommand(SQL_SELECT_ALL, Connection);
 
@@ -105,7 +109,12 @@ namespace DAO
             var dataTable = new DataTable();
             dataTable.Load(reader);
 
-            return GetDTOList(dataTable);
+            var list = GetDTOList(dataTable);
+
+            if (p_UseXML)
+                XML<List<T>>.Write(list);
+
+            return list;
         }
 
         private void SaveCommand(OracleCommand p_Command)
@@ -129,5 +138,46 @@ namespace DAO
         public abstract T GetDTO(DataRow p_DataRow);
         public abstract void AddParameters(Dictionary<string, object> p_Command, T p_Object, bool p_UseID = true);
         public abstract void AddParametersID(Dictionary<string, object> p_Command, int p_ID);
+    }
+
+    public class XML<T> where T : IEnumerable
+    {
+        public static T Read()
+        {
+            XmlReaderSettings settings = new XmlReaderSettings
+            {
+                Async = true
+            };
+
+            using XmlReader reader = XmlReader.Create(GetFileName(), settings);
+            var serializer = new XmlSerializer(typeof(T));
+            if (serializer.CanDeserialize(reader))
+            {
+                var p = serializer.Deserialize(reader);
+                T products = (T)p;
+                return products;
+            }
+            return default(T);
+        }
+
+        public static void Write(T t)
+        {
+            XmlWriterSettings settings = new XmlWriterSettings
+            {
+                Async = true,
+                Encoding = UTF8Encoding.UTF8
+            };
+
+            using FileStream fs = new FileStream(GetFileName(), FileMode.OpenOrCreate);
+            using XmlWriter wr = XmlWriter.Create(fs, settings);
+            new XmlSerializer(typeof(T)).Serialize(wr, t);
+        }
+
+        private static string GetFileName()
+        {
+            Type type = typeof(T);
+            var name = type.GetGenericArguments()[0].Name;
+            return name + ".xml";
+        }
     }
 }
